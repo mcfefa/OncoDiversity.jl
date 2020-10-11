@@ -39,5 +39,12 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
     ds = CDR3SeqData(zoodf)
     @test DataFrame(CDR3SeqData(zoodf)) |> size == (11,5)
     @test summarize(ds) |> size == (2,7)
+
+    qrange =exp10.(range(-2.0, stop=2.0, length=10000)) 
+    divs = DiversityScores(zoocounts, qrange)
+    @test 7 < divs.data.IPq[1] < 8
+    @test 1.5 < divs.data.IPq[2] < 1.9
+    @test 0.5 < divs.data.IPslope[1] < 0.6
+    @test 1.0 < divs.data.IPslope[2] < 1.05
 end
 end
