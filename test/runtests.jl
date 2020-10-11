@@ -42,9 +42,14 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
 
     qrange =exp10.(range(-2.0, stop=2.0, length=10000)) 
     divs = DiversityScores(zoocounts, qrange)
+    @show divs.data
     @test 7 < divs.data.IPq[1] < 8
     @test 1.5 < divs.data.IPq[2] < 1.9
     @test 0.5 < divs.data.IPslope[1] < 0.6
     @test 1.0 < divs.data.IPslope[2] < 1.05
+    @test 1.7 < divs.data.Shan[1] < 1.8
+    @test 1.3 < divs.data.Shan[2] < 1.4
+    @test 0.1 < divs.data.Simp[1] < 0.2
+    @test 0.2 < divs.data.Simp[2] < 0.4
 end
 end

@@ -40,9 +40,9 @@ end
 Computes the generalized diversity index for a given value of q and the associated frequencies of the dataset. 
 
 ```math
-  ^qD = \left( \sum_i^n (p_i^q) \right)^{1/(1-q)}
+  ^qD = \\left( \\sum_i^n (p_i^q) \\right)^{1/(1-q)}
 ```
-where $p_i$ are the frequency across types and $q$ is the order of diversity and you are summing over all types present in the dataset.
+where p_i are the frequency across types and q is the order of diversity and you are summing over all types present in the dataset.
 
 """
 function diversity(seq, q)
@@ -318,6 +318,15 @@ DataFrame(ds::DiversityScores) = ds.data
 
 Computes point estimates of diversity from a countframe DataFrame, range of q values, and optional sample column identifier. 
 
+Point estimates of diversity of interest: 
+* low q diversity (q=0.01)
+* high q diversity (q=100)
+* delta qD diversity = low q diversity - high q diversity
+* inflection point q
+* magnitude of slope at the inflection point
+* Shannon diversity (log qD at q=1)
+* Simpson diversity (1/qD at q=2)
+
 Input: DataFrame of counts, vector of q values, optional sample column symbol (defaults to :patient)
 Output: DiversityScores struct
 
@@ -327,8 +336,17 @@ function DiversityScores(countDF::DataFrame, rangeQ::AbstractVector, samplecol=:
   ids = lowDiv[:, samplecol]; 
   highDiv = patientdiversity(countDF,rangeQ[end]);
   dfIPslope = calcIPdiversity(countDF,rangeQ);
+  ShanDiv = patientdiversity(countDF,1.0); 
+  SimpDiv = patientdiversity(countDF,2.0); 
   # compile all diversity scores into a single dataframe
-  df = DataFrame(patient=ids, lowQ=lowDiv[:,:diversity], highQ=highDiv[:,:diversity], deltaqD=(lowDiv[:,:diversity].-highDiv[:,:diversity]), IPq=dfIPslope[:,:InflPt], IPslope=dfIPslope[:,:InflPtS]);
+  df = DataFrame(patient=ids,
+     lowQ=lowDiv[:,:diversity], 
+     highQ=highDiv[:,:diversity], 
+     deltaqD=(lowDiv[:,:diversity].-highDiv[:,:diversity]), 
+     IPq=dfIPslope[:,:InflPt], 
+     IPslope=dfIPslope[:,:InflPtS],
+     Shan=log.(ShanDiv[:,:diversity]), 
+     Simp= 1.0 ./(SimpDiv[:,:diversity]));
   return DiversityScores(rangeQ, df)
 end
 
