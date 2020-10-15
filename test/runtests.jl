@@ -39,5 +39,42 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
     ds = CDR3SeqData(zoodf)
     @test DataFrame(CDR3SeqData(zoodf)) |> size == (11,5)
     @test summarize(ds) |> size == (2,7)
+
+    qrange =exp10.(range(-2.0, stop=2.0, length=10000)) 
+    divs = DiversityScores(zoocounts, qrange)
+    @show divs.data
+    @test 7 < divs.data.IPq[1] < 8
+    @test 1.5 < divs.data.IPq[2] < 1.9
+    @test 0.5 < divs.data.IPslope[1] < 0.6
+    @test 1.0 < divs.data.IPslope[2] < 1.05
+    @test 1.7 < divs.data.Shan[1] < 1.8
+    @test 1.3 < divs.data.Shan[2] < 1.4
+    @test 0.1 < divs.data.Simp[1] < 0.2
+    @test 0.25 < divs.data.Simp[2] < 0.35
+    
+    ## adding in a "skewed zoo"
+    zoodf2 = testcsv("zoo2.csv", header=1)
+    @test size(zoodf2, 1) == 17*3
+    rename!(zoodf2, "Filename", :patient)
+    zoocounts2 = countframe(A, zoodf2)
+    pd2 = patientdiversity(zoocounts2, 100)
+    pd2 = patientdiversity(zoocounts2, 0.01)
+
+    @test innerjoin(zoocounts2, zoodf2, on=[:patient, :CDR3]) |> size == (17*3,5)
+    ds2 = CDR3SeqData(zoodf2)
+    @test summarize(ds2) |> size == (3,7)
+
+    divs2 = DiversityScores(zoocounts2, qrange)
+    @show divs2.data
+
+    ## mimicking low recovery dataset
+    zoodf3 = testcsv("zoo3.csv", header=1)
+    zoocounts3 = countframe(A, zoodf3)
+    pd3 = patientdiversity(zoocounts3, 100)
+    pd3 = patientdiversity(zoocounts3, 0.01)
+    ds3 = CDR3SeqData(zoodf3)
+    divs3 = DiversityScores(zoocounts3, qrange)
+    @show divs3.data
+
 end
 end
