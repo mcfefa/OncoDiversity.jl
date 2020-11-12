@@ -14,4 +14,8 @@ Calculating the generalized diversity index for individual patients across a var
 ### Installation
 ``` 
 Pkg.develop(PackageSpec(url="https://github.com/mcfefa/OncoDiversity.jl"))
+
+using OncoDiversity
+
 ```
+
