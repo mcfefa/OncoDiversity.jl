@@ -6,6 +6,12 @@
 
 Calculating the generalized diversity index for individual patients across a variety of different cancer datasets, including:
 
-- clustered single cell RNA-sequencing data
-- VDJ CDR3 sequences recovered from bulk sequencing files (BAM files)
+- clustered single cell data
+- individual CDR3 sequences recovered from bulk sequencing files (BAM files)
+- SomaScan analyte intensities from blood samples 
 
+
+### Installation
+``` 
+Pkg.develop(PackageSpec(url="https://github.com/mcfefa/OncoDiversity.jl"))
+```
