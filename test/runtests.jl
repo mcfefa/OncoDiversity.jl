@@ -51,7 +51,9 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
     @test 1.3 < divs.data.Shan[2] < 1.4
     @test 0.1 < divs.data.Simp[1] < 0.2
     @test 0.25 < divs.data.Simp[2] < 0.35
-    
+    @test 5.0 < divs.data.qDatIPq[1] < 5.4
+    @test 3.3 < divs.data.qDatIPq[2] < 3.5
+
     ## adding in a "skewed zoo"
     zoodf2 = testcsv("zoo2.csv", header=1)
     @test size(zoodf2, 1) == 17*3
@@ -65,6 +67,7 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
     @test summarize(ds2) |> size == (3,7)
 
     divs2 = DiversityScores(zoocounts2, qrange)
+    @test 1.8 < divs2.data.qDatIPq[3] < 1.9
     @show divs2.data
 
     ## mimicking low recovery dataset

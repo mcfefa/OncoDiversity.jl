@@ -324,6 +324,7 @@ Point estimates of diversity of interest:
 * delta qD diversity = low q diversity - high q diversity
 * inflection point q
 * magnitude of slope at the inflection point
+* diversity qD evaluated at q=inflection point q
 * Shannon diversity (log qD at q=1)
 * Simpson diversity (1/qD at q=2)
 
@@ -332,19 +333,34 @@ Output: DiversityScores struct
 
 """
 function DiversityScores(countDF::DataFrame, rangeQ::AbstractVector, samplecol=:patient)
+
+  ## richness and evenness measures of diversity
   lowDiv = patientdiversity(countDF,rangeQ[1]);
   ids = lowDiv[:, samplecol]; 
   highDiv = patientdiversity(countDF,rangeQ[end]);
+
+  ## inflection point related diversity metrics
+  #    calcIPdiversity returns the q value of the inflection point & the slope at the inflection point 
   dfIPslope = calcIPdiversity(countDF,rangeQ);
+  # calculating the diversity qD at q=IP q value
+  DatIPqDiv = Array{Float64}(undef,size(dfIPslope)[1])
+  for row in 1:size(dfIPslope)[1]
+    tmp = patientdiversity(countDF,dfIPslope[row,:InflPt]);
+    DatIPqDiv[row,1] = tmp[row,:diversity]
+  end
+
+  ## commmonly used metrics of diversity
   ShanDiv = patientdiversity(countDF,1.0); 
   SimpDiv = patientdiversity(countDF,2.0); 
-  # compile all diversity scores into a single dataframe
+
+  ## compile all diversity scores into a single dataframe
   df = DataFrame(patient=ids,
      lowQ=lowDiv[:,:diversity], 
      highQ=highDiv[:,:diversity], 
      deltaqD=(lowDiv[:,:diversity].-highDiv[:,:diversity]), 
      IPq=dfIPslope[:,:InflPt], 
      IPslope=dfIPslope[:,:InflPtS],
+     qDatIPq=DatIPqDiv, 
      Shan=log.(ShanDiv[:,:diversity]), 
      Simp= 1.0 ./(SimpDiv[:,:diversity]));
   return DiversityScores(rangeQ, df)
