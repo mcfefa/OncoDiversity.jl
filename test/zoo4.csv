@@ -1,0 +1,12 @@
+patient,CDR3,Receptor,length,abundance
+zoo1,tiger,land,5,3
+zoo1,lion,land,4,3
+zoo1,frog,water,4,3
+zoo1,alligator,water,9,4
+zoo1,lobster,water,7,2
+zoo1,warthog,land,7,2
+zoo2,tiger,land,5,2
+zoo2,meerkat,land,7,3
+zoo2,lobster,water,7,1
+zoo2,frog,water,4,3
+zoo2,alligator,water,9,8

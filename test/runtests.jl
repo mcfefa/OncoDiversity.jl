@@ -6,14 +6,13 @@ import OncoDiversity: CDR3SeqAnalysis, countframe, rename!
 using CSV
 using Query
 
-testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
-
+testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...) 
 
 @testset "OncoDiversity.jl" begin
     # Write your tests here.
     @testset "CDRAnalysis" begin
     A = CDR3SeqAnalysis()
-    zoodf = testcsv("zoo.csv", header=1)
+    zoodf = testcsv("./test/zoo.csv", header=1)
     @test size(zoodf, 1) == 34
     rename!(zoodf, "Filename", :patient)
     zoocounts = countframe(A, zoodf)
@@ -55,7 +54,7 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
     @test 3.3 < divs.data.qDatIPq[2] < 3.5
 
     ## adding in a "skewed zoo"
-    zoodf2 = testcsv("zoo2.csv", header=1)
+    zoodf2 = testcsv("./test/zoo2.csv", header=1)
     @test size(zoodf2, 1) == 17*3
     rename!(zoodf2, "Filename", :patient)
     zoocounts2 = countframe(A, zoodf2)
@@ -71,13 +70,24 @@ testcsv(path::AbstractString; kwargs...) = CSV.read(path, DataFrame; kwargs...)
     @show divs2.data
 
     ## mimicking low recovery dataset
-    zoodf3 = testcsv("zoo3.csv", header=1)
+    zoodf3 = testcsv("./test/zoo3.csv", header=1)
     zoocounts3 = countframe(A, zoodf3)
     pd3 = patientdiversity(zoocounts3, 100)
     pd3 = patientdiversity(zoocounts3, 0.01)
     ds3 = CDR3SeqData(zoodf3)
     divs3 = DiversityScores(zoocounts3, qrange)
     @show divs3.data
+
+    ## testing if dataset has abundance already calculated
+    ## created using initial zoo, so zoo4 = zoo results
+    zoodf4 = testcsv("./test/zoo4.csv", header=1)
+    zoocounts4 = countframe(A, zoodf4)
+    pd4 = patientdiversity(zoocounts4, 100)
+    pd4 = patientdiversity(zoocounts4, 0.01)
+    ds4 = CDR3SeqData(zoodf4)
+    divs4 = DiversityScores(zoocounts4, qrange)
+    @show divs4.data
+    @test divs.data == divs4.data
 
 end
 end

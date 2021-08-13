@@ -179,18 +179,42 @@ Output: DataFrame
 
 """
 function countframe(a::CDR3SeqAnalysis, typeDF::DataFrame)
+  ## checks that you have a column of individual identifies and CDR3 sequences
   requirecol(typeDF, "patient")
   requirecol(typeDF, "CDR3")
   
-  countDF = @from i in typeDF begin
-    @group i by i.patient, i.CDR3 into g
-    @select {
-        patient=first(g.patient), 
-        CDR3=first(g.CDR3), 
-        count=length(g.CDR3)
-    }
-    @collect DataFrame
-  end;
+  ## check if there is a column called abundances -- for cases where you do not need to count individual reads
+
+  ## try seeing if there is a column called abundance
+  ## otherwise assumes that 1 row in the dataframe = 1 read
+  try
+    requirecol(typeDF, "abundance")
+    ## if requirecol not satisfied, will jump to catch
+
+    countDF = @from i in typeDF begin
+      @where i.abundance > 0 
+      @select {
+        patient=i.patient, 
+        CDR3=i.CDR3, 
+        count=i.abundance
+      }
+      @collect DataFrame
+    end;
+
+  catch
+    countDF = @from i in typeDF begin
+      @group i by i.patient, i.CDR3 into g
+      @select {
+          patient=first(g.patient), 
+          CDR3=first(g.CDR3), 
+          count=length(g.CDR3)
+      }
+      @collect DataFrame
+    end;
+  end
+
+  #return countDF
+
 end
 
 """    countframefull(a::CDR3SeqAnalysis, df::DataFrame)
