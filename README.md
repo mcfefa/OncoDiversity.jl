@@ -1,5 +1,13 @@
 # OncoDiversity
 
+## Citation
+
+If you are using OncoDiversity.jl in your research, please cite this paper: 
+
+MC Ferrall-Fairbanks, NH Chakiryan, BI Chobrutskiy, Y Kim, JK Teer, A Berglund, JJ Mule, M Fournier, EM Siegel, J Dhillon, SSA Falasiri, JF Arturo, EN Katende, G Blanck, BJ Manley, PM Altrock. (2022) _Cancer Res._ 2022 Mar 1; 82(5):929-942. doi: [10.1158/0008-5472.CAN-21-1747](https://aacrjournals.org/cancerres/article/82/5/929/681768/Quantification-of-T-and-B-cell-Immune-Receptor). PMID: [35031572](https://pubmed.ncbi.nlm.nih.gov/35031572/). PMCID: [PMC8898280](https://pmc.ncbi.nlm.nih.gov/articles/PMC8898280/).
+
+## OncoDiversity.jl Package
+
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://mcfefa.github.io/OncoDiversity.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://mcfefa.github.io/OncoDiversity.jl/dev)
 [![Build Status](https://github.com/mcfefa/OncoDiversity.jl/workflows/CI/badge.svg)](https://github.com/mcfefa/OncoDiversity.jl/actions)
